@@ -3,7 +3,7 @@ package LoadBalancer;
 import java.util.LinkedList;
 
 public class JobData {
-    public static LinkedList<Job> get(){
+    public static LinkedList<Job> get() {
         LinkedList<Job> list = new LinkedList<>();
         list.add(new Job("job1", 95, 83, 3, false));
         list.add(new Job("job2", 84, 36, 5, false));
