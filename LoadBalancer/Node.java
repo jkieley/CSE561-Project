@@ -8,7 +8,6 @@ import GenCol.*;
 public class Node extends ViewableAtomic 
 	{
 	protected entity job;
-	protected int waitLength = 5;
 	protected double CPUCapacity;
 	protected double MemoryCapacity;
 	protected double DBConnectionCapacity;
@@ -99,7 +98,7 @@ public class Node extends ViewableAtomic
 									}
 								holdIn("Working", ((Job)job).getTimeNeeded());
 								}
-							else if(waitingList.size() < waitLength)
+							else 
 								waitingList.add(processJob);
 							}
 						}
@@ -150,7 +149,7 @@ public class Node extends ViewableAtomic
 			{
 			message m = new message();
 			m.add(makeContent("jobOut", job));
-			m.add(makeContent("Connections", new Pair(name ,waitLength - waitingList.size())));
+			m.add(makeContent("Connections", new Pair(name , waitingList.size())));
 			return m;
 			}
 //=============================================================================================
