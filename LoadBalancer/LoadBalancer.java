@@ -2,7 +2,7 @@ package LoadBalancer;
 import GenCol.entity;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
-
+import java.util.Random;
 import java.util.Vector;
 
 import GenCol.*;
@@ -12,6 +12,7 @@ public class LoadBalancer extends ViewableAtomic
 	{
 	protected entity job;
 	protected Queue nodes;
+	Random random;
 	int[] nodeConnections;
 	
 //=============================================================================================
@@ -20,6 +21,7 @@ public class LoadBalancer extends ViewableAtomic
 		super("LoadBalancer");
 		nodes = nodeList;
 		nodeConnections = new int[nodes.size()];
+		random = new Random();
 		for(int i = 0; i < nodes.size(); i++)
 			nodeConnections[i] = 0;
 		addInport("jobIn");
@@ -68,6 +70,9 @@ public class LoadBalancer extends ViewableAtomic
 			{
 			String node = "";
 			node = roundRobin();
+			//node = random();
+			//node = weightedRoundRobin();
+			//node = leastConnection();
 			return node;
 			}
 //=============================================================================================
@@ -77,6 +82,32 @@ public class LoadBalancer extends ViewableAtomic
 				node = (Node) nodes.remove();	
 				nodes.add(node);
 				return node.getName();
+				}
+//=============================================================================================
+		public String weightedRoundRobin() 
+				{
+				Node node;
+				node = (Node) nodes.remove();	
+				nodes.add(node);
+				return node.getName();
+				}
+//=============================================================================================
+		public String random() 
+				{
+				return ((Node)nodes.get(random.nextInt(nodes.size()))).getName();
+				}
+//=============================================================================================
+		public String leastConnection() 
+				{
+				int minPos = 0;
+				int minNum = nodeConnections[0];
+				for(int i = 1; i < nodes.size(); i++)
+					if(nodeConnections[i] < minNum)
+						{
+						minPos = i;
+						minNum = nodeConnections[i];
+						}
+				return ((Node)nodes.get(minPos)).getName();
 				}
 //=============================================================================================
 		public void deltint() 
