@@ -13,9 +13,7 @@ public class Network extends ViewableDigraph {
 		int numNodes = 5;
 		Queue nodes = new Queue();
 		double expTime = 80.0;
-		for (int i = 0; i < numNodes; i++) {
-			nodes.add(0);
-		}
+
 		ViewableAtomic Balancer = new LoadBalancer(nodes);
 
 		add(Balancer);
@@ -23,6 +21,13 @@ public class Network extends ViewableDigraph {
 		addOutport("jobOut");
 		addCoupling(this, "jobIn", Balancer, "jobIn");
 		addCoupling(Balancer, "jobOut", this, "jobOut");
+
+		for (int i = 0; i < numNodes; i++) {
+			Node node = new Node(String.valueOf(i), 100,100, 5);
+			nodes.add(node);
+			add(node);
+		}
+
 	}
 
 	//=============================================================================================
