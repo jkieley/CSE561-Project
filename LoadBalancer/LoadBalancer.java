@@ -21,7 +21,7 @@ public class LoadBalancer extends ViewableAtomic
 		nodes = nodeList;
 		nodeConnections = new int[nodes.size()];
 		for(int i = 0; i < nodes.size(); i++)
-			nodeConnections[i] = (((Node)nodes.getFirst()).waitLength);
+			nodeConnections[i] = 0;
 		addInport("jobIn");
 		addInport("Connections");
 		addOutport("jobOut");
