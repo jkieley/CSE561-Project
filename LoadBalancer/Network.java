@@ -20,13 +20,13 @@ public class Network extends ViewableDigraph {
 		addInport("jobIn");
 		addOutport("jobOut");
 		addCoupling(this, "jobIn", Balancer, "jobIn");
-		addCoupling(Balancer, "jobOut", this, "jobOut");
 
 		for (int i = 0; i < numNodes; i++) {
 			Node node = new Node(String.valueOf(i), 100,100, 5);
 			nodes.add(node);
 			add(node);
 			addCoupling(Balancer, "jobOut", node, "jobIn");
+			addCoupling(node, "jobOut", this, "jobOut");
 		}
 
 	}
