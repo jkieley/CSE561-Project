@@ -80,6 +80,20 @@ public class Node extends ViewableAtomic
 								MemoryCapacity = MemoryCapacity - memoryToUse;
 								DBConnectionCapacity = DBConnectionCapacity - connection;
 								connectionList.add(processJob);
+								int size = connectionList.size();
+								double min = Double.MAX_VALUE;
+								int index = 0;
+								for(int j = 0; j < size; j++)
+									{
+									Job temp = (Job)connectionList.get(j);
+									temp.ProcessingTime = temp.ProcessingTime - e;
+									if(temp.ProcessingTime <= min)
+										{
+										job = temp;
+										min = temp.ProcessingTime;
+										}	
+									}
+								holdIn("Working", ((Job)job).getTimeNeeded());
 								}
 							}
 						}
@@ -89,7 +103,7 @@ public class Node extends ViewableAtomic
 //=============================================================================================
 		public void deltint() 
 			{
-			Job processJob = (Job)connectionList.removeFirst();
+			Job processJob = (Job)connectionList.remove(connectionList.indexOf(job));
 			double cpuUsed = processJob.getCPUNeeded();
 			double memoryUsed = processJob.getMemoryNeeded();
 			int connection = 0;
@@ -97,14 +111,24 @@ public class Node extends ViewableAtomic
 				connection = 1;
 			CPUCapacity = CPUCapacity + cpuUsed;
 			MemoryCapacity = MemoryCapacity + memoryUsed;
-			DBConnectionCapacity = DBConnectionCapacity - connection;
+			DBConnectionCapacity = DBConnectionCapacity + connection;
 			if(connectionList.isEmpty())
 				passivateIn("Waiting");
 			else
 				{
-				job = (entity)connectionList.first();
-				processJob = (Job)job;
-				holdIn("Working", processJob.getTimeNeeded());
+				int size = connectionList.size();
+				double min = Double.MAX_VALUE;
+				for(int j = 0; j < size; j++)
+					{
+					Job temp = (Job)connectionList.get(j);
+					temp.ProcessingTime = temp.ProcessingTime - processJob.ProcessingTime;
+					if(temp.ProcessingTime <= min)
+						{
+						job = temp;
+						min = temp.ProcessingTime;
+						}	
+					}
+				holdIn("Working", ((Job)job).getTimeNeeded());
 				}
 			}
 //=============================================================================================
