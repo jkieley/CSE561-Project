@@ -159,8 +159,4 @@ public class Node extends ViewableAtomic
 			super.showState();
 			}
 //=============================================================================================
-		public String getTooltipText() 
-			{
-			return super.getTooltipText() + "\n" + job.getName();
-			}
 	}

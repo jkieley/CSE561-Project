@@ -26,6 +26,7 @@ public class Network extends ViewableDigraph {
 			Node node = new Node(String.valueOf(i), 100,100, 5);
 			nodes.add(node);
 			add(node);
+			addCoupling(Balancer, "jobOut", node, "jobIn");
 		}
 
 	}
