@@ -13,6 +13,7 @@ public class LoadBalancer extends ViewableAtomic
 	protected entity job;
 	protected Queue nodes;
 	Random random;
+	int count = 0;
 	int[] nodeConnections;
 	
 //=============================================================================================
@@ -87,7 +88,14 @@ public class LoadBalancer extends ViewableAtomic
 		public String weightedRoundRobin() 
 				{
 				Node node;
-				node = (Node) nodes.remove();	
+				if(count == 3 || count == 6 || count == 8 || count == 10 || count == 11)
+					{
+					node = (Node)nodes.remove();
+					nodes.add(node);
+					}
+				count++;
+				count = count % 12;
+				node = 	(Node)nodes.first();
 				nodes.add(node);
 				return node.getName();
 				}
