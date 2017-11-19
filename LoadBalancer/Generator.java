@@ -33,7 +33,7 @@ public class Generator extends ViewableAtomic {
             this.jobs.push(job);
         }
 
-        ta = 30 / jobs.size();
+        ta = 30.00 / jobs.size();
 
     }
 
