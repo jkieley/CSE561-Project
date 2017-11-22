@@ -142,6 +142,7 @@ public class Node extends ViewableAtomic
 						{
 						connectionList.add(temp);
 						waitingList.remove(i);
+						i = i-1;
 						CPUCapacity = CPUCapacity - cpuToUse;
 						MemoryCapacity = MemoryCapacity - memoryToUse;
 						DBConnectionCapacity = DBConnectionCapacity - connection;

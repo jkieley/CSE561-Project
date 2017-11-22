@@ -93,6 +93,14 @@ public class LoadBalancer extends ViewableAtomic
 					node = (Node)nodes.remove();
 					nodes.add(node);
 					}
+				if(count < 3)
+					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/5.0;
+				else if(count < 6)
+					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/4.0;
+				else if(count < 8)
+					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/3.0;
+				else if(count < 10)
+					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/2.0;
 				count++;
 				count = count % 12;
 				node = 	(Node)nodes.first();

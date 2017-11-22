@@ -55,8 +55,9 @@ public class Generator extends ViewableAtomic {
     //=============================================================================================
     public message out() {
         message m = new message();
-        Job job = (Job)jobs.removeFirst();
+        Job job = (Job)jobs.removeFirst();				//Random
         jobs.add(job);
+        												//More to weight
         //Job job = new Job("Job"+count,10,10,6,true); //Round robin best case
         content con = makeContent("jobOut", (entity) job);
         m.add(con);
