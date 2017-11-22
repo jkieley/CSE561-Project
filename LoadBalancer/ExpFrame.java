@@ -11,7 +11,7 @@ public class ExpFrame extends ViewableDigraph {
     public ExpFrame() {
         super("ExpFrame");
 
-        double expTime = 30.0;
+        double expTime = 40.0;
         ViewableAtomic Generator = new Generator();
         ViewableAtomic Transducer = new Transducer(expTime);
         add(Generator);

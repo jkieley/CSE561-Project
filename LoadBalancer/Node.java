@@ -48,7 +48,7 @@ public class Node extends ViewableAtomic
 						Job processJob = (Job)x.getValOnPort("jobIn", i);
 						if(processJob.getProcessor().equals(this.name))
 							{
-							job = x.getValOnPort("jobIn", i);
+							job = processJob;
 							double cpuToUse = processJob.getCPUNeeded();
 							double memoryToUse = processJob.getMemoryNeeded();
 							int connection = 0;
@@ -70,6 +70,12 @@ public class Node extends ViewableAtomic
 					if (messageOnPort(x, "jobIn", i)) 
 						{
 						Job processJob = (Job)x.getValOnPort("jobIn", i);
+						int size = connectionList.size();
+						for(int j = 0; j < size; j++)
+							{
+							Job temp = (Job)connectionList.get(j);
+							temp.ProcessingTime = temp.ProcessingTime - e;
+							}
 						if(processJob.getProcessor().equals(this.name))
 							{
 							double cpuToUse = processJob.getCPUNeeded();
@@ -83,24 +89,23 @@ public class Node extends ViewableAtomic
 								MemoryCapacity = MemoryCapacity - memoryToUse;
 								DBConnectionCapacity = DBConnectionCapacity - connection;
 								connectionList.add(processJob);
-								int size = connectionList.size();
+								size = connectionList.size();
 								double min = Double.MAX_VALUE;
 								int index = 0;
 								for(int j = 0; j < size; j++)
 									{
 									Job temp = (Job)connectionList.get(j);
-									temp.ProcessingTime = temp.ProcessingTime - e;
 									if(temp.ProcessingTime <= min)
 										{
 										job = temp;
 										min = temp.ProcessingTime;
 										}	
 									}
-								holdIn("Working", ((Job)job).getTimeNeeded());
 								}
 							else 
 								waitingList.add(processJob);
 							}
+						holdIn("Working", ((Job)job).getTimeNeeded());
 						}
 					}
 				}
@@ -117,18 +122,41 @@ public class Node extends ViewableAtomic
 			CPUCapacity = CPUCapacity + cpuUsed;
 			MemoryCapacity = MemoryCapacity + memoryUsed;
 			DBConnectionCapacity = DBConnectionCapacity + connection;
+			int size = connectionList.size();
+			for(int j = 0; j < size; j++)
+				{
+				Job temp = (Job)connectionList.get(j);
+				temp.ProcessingTime = temp.ProcessingTime - processJob.ProcessingTime;
+				}
 			if(waitingList.size() > 0)
-				connectionList.add(waitingList.removeFirst());
+				{
+				for(int i = 0; i < waitingList.size(); i++)
+					{
+					Job temp = (Job)waitingList.get(i);
+					double cpuToUse = temp.getCPUNeeded();
+					double memoryToUse = temp.getMemoryNeeded();
+					connection = 0;
+					if(temp.isConnectionNeeded())
+						connection = 1;
+					if(CPUCapacity - cpuToUse >= 0 && MemoryCapacity - memoryToUse >= 0 && DBConnectionCapacity - connection >= 0)
+						{
+						connectionList.add(temp);
+						waitingList.remove(i);
+						CPUCapacity = CPUCapacity - cpuToUse;
+						MemoryCapacity = MemoryCapacity - memoryToUse;
+						DBConnectionCapacity = DBConnectionCapacity - connection;
+						}
+					}
+				}
 			if(connectionList.isEmpty())
 				passivateIn("Waiting");
 			else
 				{
-				int size = connectionList.size();
+				size = connectionList.size();
 				double min = Double.MAX_VALUE;
 				for(int j = 0; j < size; j++)
 					{
 					Job temp = (Job)connectionList.get(j);
-					temp.ProcessingTime = temp.ProcessingTime - processJob.ProcessingTime;
 					if(temp.ProcessingTime <= min)
 						{
 						job = temp;
@@ -149,7 +177,7 @@ public class Node extends ViewableAtomic
 			{
 			message m = new message();
 			m.add(makeContent("jobOut", job));
-			m.add(makeContent("Connections", new Pair(name , waitingList.size())));
+			m.add(makeContent("Connections", new Pair(name , waitingList.size() + connectionList.size())));
 			return m;
 			}
 //=============================================================================================

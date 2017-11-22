@@ -17,6 +17,7 @@ public class Transducer extends ViewableAtomic {
     protected double clock;
     protected double total_ta;
     protected double observation_time;
+    boolean done;
 
     public Transducer() {
         this(200);
@@ -36,13 +37,14 @@ public class Transducer extends ViewableAtomic {
         observation_time = taObservation;
         addTestInput("JobArrived", new Job("job0", 5, 5, 10, true));
         addTestInput("JobCompleted", new Job("job0", 5, 5, 10, true));
+        done = false;
         initialize();
     }
 
     //===============================================================================
     public void initialize() {
         phase = "active";
-        sigma = observation_time;
+        sigma = observation_time - 10;
         clock = 0;
         total_ta = 0;
         super.initialize();
@@ -84,26 +86,38 @@ public class Transducer extends ViewableAtomic {
     //===============================================================================
     public void deltint() {
         clock = clock + sigma;
-        passivate();
-        show_state();
+        if(done)
+        	{
+        	passivate();
+        	show_state();
+        	}
+        else
+        	{
+        	done = true;
+        	holdIn("Processing", 10);
+        	}
     }
 
     //===============================================================================
     public message out() {
         message m = new message();
         double average;
-        if (jobsCompleted.size() == 0)
-            average = 0;
+        System.out.println("=====================" + clock);
+        if(done)
+    		{
+        	if (jobsCompleted.size() == 0)
+        		average = 0;
+        	else
+        		average = total_ta / jobsCompleted.size();
+        	content con1 = makeContent("AverageTimeNeeded", new entity(" " + average));
+        	content con2 = makeContent("NumCompletedJobs", new entity("" + jobsCompleted.size()));
+        	content con3 = makeContent("NumJobsDropped", new entity("" + (jobsArrived.size() - jobsCompleted.size())));
+        	m.add(con1);
+        	m.add(con2);
+        	m.add(con3);
+    		}
         else
-            average = total_ta / jobsCompleted.size();
-        content con1 = makeContent("AverageTimeNeeded", new entity(" " + average));
-        content con2 = makeContent("NumCompletedJobs", new entity("" + jobsCompleted.size()));
-        content con3 = makeContent("NumJobsDropped", new entity("" + (jobsArrived.size() - jobsCompleted.size())));
-        content con4 = makeContent("Stop", new entity("Stop"));
-        m.add(con1);
-        m.add(con2);
-        m.add(con3);
-        m.add(con4);
+            m.add(makeContent("Stop", new entity("Stop")));
         return m;
     }
 

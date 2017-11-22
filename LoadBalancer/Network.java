@@ -14,7 +14,7 @@ public class Network extends ViewableDigraph {
 		Queue nodes = new Queue();
 		double expTime = 80.0;
 
-		ViewableAtomic Balancer = new LoadBalancer(nodes);
+		ViewableAtomic Balancer = new LoadBalancer(nodes, numNodes);
 
 		add(Balancer);
 		addInport("jobIn");
@@ -26,6 +26,7 @@ public class Network extends ViewableDigraph {
 			nodes.add(node);
 			add(node);
 			addCoupling(Balancer, "jobOut", node, "jobIn");
+			addCoupling(node, "Connections", Balancer, "Connections");
 			addCoupling(node, "jobOut", this, "jobOut");
 		}
 

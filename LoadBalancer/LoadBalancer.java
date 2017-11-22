@@ -17,13 +17,13 @@ public class LoadBalancer extends ViewableAtomic
 	int[] nodeConnections;
 	
 //=============================================================================================
-	public LoadBalancer(Queue nodeList) 
+	public LoadBalancer(Queue nodeList, int numNodes) 
 		{
 		super("LoadBalancer");
 		nodes = nodeList;
-		nodeConnections = new int[nodes.size()];
+		nodeConnections = new int[numNodes];
 		random = new Random();
-		for(int i = 0; i < nodes.size(); i++)
+		for(int i = 0; i < numNodes; i++)
 			nodeConnections[i] = 0;
 		addInport("jobIn");
 		addInport("Connections");
@@ -70,10 +70,10 @@ public class LoadBalancer extends ViewableAtomic
 		public String chooseNode() 
 			{
 			String node = "";
-			node = roundRobin();
+			//node = roundRobin();
 			//node = random();
 			//node = weightedRoundRobin();
-			//node = leastConnection();
+			node = leastConnection();
 			return node;
 			}
 //=============================================================================================
@@ -96,7 +96,6 @@ public class LoadBalancer extends ViewableAtomic
 				count++;
 				count = count % 12;
 				node = 	(Node)nodes.first();
-				nodes.add(node);
 				return node.getName();
 				}
 //=============================================================================================
