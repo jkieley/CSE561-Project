@@ -8,11 +8,11 @@ import view.modeling.ViewableDigraph;
 import java.awt.*;
 
 public class ExpFrame extends ViewableDigraph {
-    public ExpFrame() {
+    public ExpFrame(int dataType, int size ) {
         super("ExpFrame");
 
         double expTime = 40.0;
-        ViewableAtomic Generator = new Generator();
+        ViewableAtomic Generator = new Generator(dataType, size);
         ViewableAtomic Transducer = new Transducer(expTime);
         add(Generator);
         add(Transducer);

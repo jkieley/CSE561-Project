@@ -14,11 +14,37 @@ import view.modeling.ViewableDigraph;
 import java.awt.*;
 
 public class EF_Network extends ViewableDigraph {
-
+	protected static int uniformNodes = 0;
+	protected static int variableNodes = 1;
+	protected static int roundRobinAlg = 0;
+	protected static int randomAlg = 1;
+	protected static int weightedRoundRobinAlg = 2;
+	protected static int leastConnectionAlg = 3;
+	protected static int uniformData = 0;
+	protected static int variableData = 1;
+	
     public EF_Network() {
         super("EF_Network");
-        ViewableDigraph ExpFrame = new ExpFrame();
-        ViewableDigraph Network = new Network();
+        //##################################### Uniform node round robin algorithm of 100 uniform jobs
+        ViewableDigraph ExpFrame = new ExpFrame(uniformData, 100);
+        ViewableDigraph Network = new Network(uniformNodes, roundRobinAlg);
+        //#####################################
+        
+        //##################################### Uniform node random algorithm of 100 uniform jobs
+        //ViewableDigraph ExpFrame = new ExpFrame(uniformData, 100);
+        //ViewableDigraph Network = new Network(uniformNodes, randomAlg);
+        //#####################################
+        
+        //##################################### Uniform node weighted round robin algorithm of 100 uniform jobs
+        //ViewableDigraph ExpFrame = new ExpFrame(uniformData, 100);
+        //ViewableDigraph Network = new Network(uniformNodes, weightedRoundRobinAlg);
+        //#####################################
+        
+        //##################################### Uniform node least connection algorithm of 100 uniform jobs
+        //ViewableDigraph ExpFrame = new ExpFrame(uniformData, 100);
+        //ViewableDigraph Network = new Network(uniformNodes, leastConnectionAlg);
+        //#####################################
+        
         add(ExpFrame);
         add(Network);
         addOutport("NumCompletedJobs");

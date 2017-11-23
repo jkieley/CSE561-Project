@@ -12,12 +12,16 @@ public class Generator extends ViewableAtomic {
     protected int count;
     protected double ta;
     protected Queue jobs;
+    protected int dataType;
+    protected int numJobs;
 
     //=============================================================================================
-    public Generator() {
+    public Generator(int data, int size) {
         super("Generator");
         addInport("Stop");
         jobs = new Queue();
+        numJobs = size;
+        dataType = data;
         addOutport("jobOut");
         initialize();
     }
@@ -33,8 +37,7 @@ public class Generator extends ViewableAtomic {
             this.jobs.push(job);
         }
 
-        ta = 30.00 / jobs.size();
-
+        ta = 30.00 / numJobs;
     }
 
     //=============================================================================================
@@ -55,10 +58,14 @@ public class Generator extends ViewableAtomic {
     //=============================================================================================
     public message out() {
         message m = new message();
-        Job job = (Job)jobs.removeFirst();				//Random
-        jobs.add(job);
-        												//More to weight
-        //Job job = new Job("Job"+count,10,10,6,true); //Round robin best case
+        Job job;
+        if(dataType == 1)								//Random
+        	{
+        	job = (Job)jobs.removeFirst();				
+        	jobs.add(job);
+        	}
+        else											//Uniform
+        	job = new Job("Job"+count,10,10,6,true); 
         content con = makeContent("jobOut", (entity) job);
         m.add(con);
         return m;

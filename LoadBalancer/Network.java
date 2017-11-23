@@ -8,27 +8,35 @@ import view.modeling.ViewableDigraph;
 import java.awt.*;
 
 public class Network extends ViewableDigraph {
-	public Network() {
+	public Network(int nodeType, int algorithm) {
 		super("Network");
 		int numNodes = 5;
 		Queue nodes = new Queue();
 		double expTime = 80.0;
 
-		ViewableAtomic Balancer = new LoadBalancer(nodes, numNodes);
+		ViewableAtomic Balancer = new LoadBalancer(nodes, numNodes, algorithm);
 
 		add(Balancer);
 		addInport("jobIn");
 		addOutport("jobOut");
 		addCoupling(this, "jobIn", Balancer, "jobIn");
-
-		for (int i = 0; i < numNodes; i++) {
-			Node node = new Node(String.valueOf(i), 100,100, 5);
+		double nodeScale = 2;
+		for (int i = 0; i < numNodes; i++) 
+			{
+			Node node;
+			if(nodeType == 0)
+				node = new Node(String.valueOf(i), 100,100, 5, 1.0);
+			else
+				{
+				node = new Node(String.valueOf(i), 100,100, 5, nodeScale);
+				nodeScale = nodeScale - 0.2;
+				}
 			nodes.add(node);
 			add(node);
 			addCoupling(Balancer, "jobOut", node, "jobIn");
 			addCoupling(node, "Connections", Balancer, "Connections");
 			addCoupling(node, "jobOut", this, "jobOut");
-		}
+			}
 
 	}
 

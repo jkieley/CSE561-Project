@@ -14,15 +14,17 @@ public class LoadBalancer extends ViewableAtomic
 	protected Queue nodes;
 	Random random;
 	int count = 0;
+	int algorithm;
 	int[] nodeConnections;
 	
 //=============================================================================================
-	public LoadBalancer(Queue nodeList, int numNodes) 
+	public LoadBalancer(Queue nodeList, int numNodes, int alg) 
 		{
 		super("LoadBalancer");
 		nodes = nodeList;
 		nodeConnections = new int[numNodes];
 		random = new Random();
+		algorithm = alg;
 		for(int i = 0; i < numNodes; i++)
 			nodeConnections[i] = 0;
 		addInport("jobIn");
@@ -70,10 +72,14 @@ public class LoadBalancer extends ViewableAtomic
 		public String chooseNode() 
 			{
 			String node = "";
-			//node = roundRobin();
-			//node = random();
-			//node = weightedRoundRobin();
-			node = leastConnection();
+			if(algorithm == 0)
+				node = roundRobin();
+			else if(algorithm ==1)
+				node = random();
+			else if(algorithm ==2)
+				node = weightedRoundRobin();
+			else
+				node = leastConnection();
 			return node;
 			}
 //=============================================================================================
@@ -93,14 +99,6 @@ public class LoadBalancer extends ViewableAtomic
 					node = (Node)nodes.remove();
 					nodes.add(node);
 					}
-				if(count < 3)
-					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/5.0;
-				else if(count < 6)
-					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/4.0;
-				else if(count < 8)
-					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/3.0;
-				else if(count < 10)
-					((Job)job).ProcessingTime = ((Job)job).ProcessingTime/2.0;
 				count++;
 				count = count % 12;
 				node = 	(Node)nodes.first();

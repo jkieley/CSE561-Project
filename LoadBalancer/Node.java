@@ -13,14 +13,16 @@ public class Node extends ViewableAtomic
 	protected double DBConnectionCapacity;
 	protected Queue connectionList;
 	protected Queue waitingList;
+	protected double scale;
 	
 //=============================================================================================
-	public Node(String name, double cpu, double memory, double dbConnections) 
+	public Node(String name, double cpu, double memory, double dbConnections, double processorScale) 
 		{
 		super(name);
 		CPUCapacity = cpu;
 		MemoryCapacity = memory;
 		DBConnectionCapacity = dbConnections;
+		scale = processorScale;
 		connectionList = new Queue();
 		waitingList = new Queue();
 		addInport("jobIn");
@@ -58,6 +60,7 @@ public class Node extends ViewableAtomic
 							MemoryCapacity = MemoryCapacity - memoryToUse;
 							DBConnectionCapacity = DBConnectionCapacity - connection;
 							connectionList.add(job);
+							processJob.ProcessingTime = processJob.ProcessingTime/scale;
 							holdIn("Working", processJob.getTimeNeeded());
 							}
 						}
@@ -83,6 +86,7 @@ public class Node extends ViewableAtomic
 							int connection = 0;
 							if(processJob.isConnectionNeeded())
 								connection = 1;
+							processJob.ProcessingTime = processJob.ProcessingTime/scale;
 							if(CPUCapacity - cpuToUse >= 0 && MemoryCapacity - memoryToUse >= 0 && DBConnectionCapacity - connection >= 0)
 								{
 								CPUCapacity = CPUCapacity - cpuToUse;
